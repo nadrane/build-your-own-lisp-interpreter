@@ -6,20 +6,52 @@ function tokenize(str) {
     .filter(token => token !== "");
 }
 
-function parse(str) {
-  const tokens = tokenize(str);
-  return makeAST(tokens);
+const apply = (fn, ...args) => args.reduce((accum, next) => fn(accum, next))
+
+const env = {
+  "+": (...args) => apply((a,b) => a + b, ...args),
+  "-": (...args) => apply((a,b) => a - b, ...args),
+  "*": (...args) => apply((a,b) => a * b, ...args),
+  "/": (...args) => apply((a,b) => a / b, ...args)
 }
 
-function makeAST(tokens) {
-  const AST = [];
+function evaluate(program) {
+  const ast = parse(program)
+  return evaluateExpression(ast)
+}
+
+function evaluateExpression(expression) {
+  if (!expression.length) {
+    throw new Error()
+  }
+  const operator = expression.shift()
+  const operands = []
+  while(expression.length) {
+    const operand = expression.shift()
+    if (Array.isArray(operand)) {
+      operands.push(evaluateExpression(operand))
+    } else {
+      operands.push(operand)
+    }
+  }
+  console.log(operator, '|', operands)
+  return env[operator](...operands)
+}
+
+function parse(str) {
+  const tokens = tokenize(str);
+  return makeAst(tokens);
+}
+
+function makeAst(tokens) {
+  const ast = [];
   let token = tokens.shift();
   if (token === "(") {
     while (tokens[0] !== ")") {
-      AST.push(makeAST(tokens));
+      ast.push(makeAst(tokens));
     }
     tokens.shift(); // Discard trailing )
-    return AST
+    return ast
   } else {
     return atom(token);
   }
@@ -39,5 +71,6 @@ function symbol(token) {
 
 module.exports = {
   tokenize,
-  parse
+  parse,
+  evaluate
 };

@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const mocha = require("mocha");
-const { tokenize, parse } = require("./solution");
+const { tokenize, parse, evaluate } = require("./solution");
 
 describe("interpreter", () => {
 
@@ -48,6 +48,15 @@ describe("interpreter", () => {
         expect(parse("(- 3 (+ 3 5))")).to.deep.equal(['-', 3, ['+', 3, 5]]);
         expect(parse("(- 3 5 3(+ 8 0))")).to.deep.equal(['-', 3, 5, 3, ['+', 8, 0]]);
       })
+    })
+  })
+
+  describe('calculator', () => {
+    it("Supports basic mathmatical operations", () => {
+      expect(evaluate("(+ 3 4)")).to.equal(7)
+    })
+    it("Supports mathmatical operations with nesting", () => {
+      expect(evaluate("(+ 3 4 (+ 3 2))")).to.equal(12)
     })
   })
 });
