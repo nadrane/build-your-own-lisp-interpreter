@@ -21,21 +21,13 @@ function evaluate(program) {
 }
 
 function evaluateExpression(expression) {
-  if (!expression.length) {
-    throw new Error()
+  if (Array.isArray(expression)) {
+    const operator = expression.shift()
+    const operands = expression.map(evaluateExpression)
+    return env[operator](...operands)
+  } else {
+    return expression
   }
-  const operator = expression.shift()
-  const operands = []
-  while(expression.length) {
-    const operand = expression.shift()
-    if (Array.isArray(operand)) {
-      operands.push(evaluateExpression(operand))
-    } else {
-      operands.push(operand)
-    }
-  }
-  console.log(operator, '|', operands)
-  return env[operator](...operands)
 }
 
 function parse(str) {
