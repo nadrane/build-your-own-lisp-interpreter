@@ -18,7 +18,7 @@ describe("interpreter", () => {
 
       // note: do not assume tokens will always be 1 character in length! We will add more and longer tokens later
       it("should return an array whose elements are each a significant characters", () => {
-        expect(tokenize("(* 5 5)")).to.deep.equal(["(", "*", "5", "5", ")"]);
+        expect(tokenize("(* 5 5)")).to.deep.loose.equal(["(", "*", "5", "5", ")"]);
         expect(tokenize("(* 2 (+ 8 1 3))")).to.deep.equal(["(", "*", "2", "(", "+", "8", "1", "3", ")", ")"]);
         expect(tokenize("(/ (- 10 5) (* 2 (+ 8 1 )))")).to.deep.equal([
           "(",
@@ -118,6 +118,11 @@ describe("interpreter", () => {
     });
   });
 
+  // TODO
+  describe("comparators", () => {
+
+  });
+
   /* Variables are set in lisp using the `define` keyword.
      For example,the following expression sets x equal to 10:
 
@@ -166,4 +171,21 @@ describe("interpreter", () => {
       expect(env).to.have.property("z", 4);
     });
   });
+
+  describe("if conditions", () => {
+    it('executes the consequent if the predicate is true', ()=> {
+      expect(evaluate("(if (> 1 0) 1 0)")).to.equal(1)
+    })
+    it('executes the alternative if the predicate is false', ()=> {
+      expect(evaluate("(if (< 1 0) 1 0)")).to.equal(0)
+    })
+    it('allows for the consequent and the alternative to be complicated expressions', () => {
+      expect(evaluate("(if (> 1 0) (+ 4 6) 0)")).to.equal(10)
+      expect(evaluate("(if (< 1 0) 1 (+ 9 9))")).to.equal(18)
+    })
+  })
+
+  describe("lambda functions", () => {
+
+  })
 });

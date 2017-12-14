@@ -15,6 +15,7 @@ module.exports = function(chai, utils) {
   var equals = function(_super) {
       return function(value) {
         if (utils.flag(this, "loose")) {
+          console.log('expect', value, 'actual', this._obj);
           this.assert(compare(this._obj, value))
         } else {
           _super.apply(this, arguments);
@@ -23,6 +24,5 @@ module.exports = function(chai, utils) {
     };
 
   chai.Assertion.overwriteMethod("equal", equals);
-  chai.Assertion.overwriteMethod("equals", equals);
-  chai.Assertion.overwriteMethod("eq", equals);
+  chai.Assertion.overwriteMethod("eql", equals);
 };
