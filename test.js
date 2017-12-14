@@ -185,7 +185,37 @@ describe("interpreter", () => {
     })
   })
 
-  describe("lambda functions", () => {
+  describe.only("lambda functions", () => {
+    it('it should save defined lambda functions to the environment', () => {
+      const env = {}
+      evaluate("(define square (lambda (x) (* x x)))", env)
+      expect(env).to.haveOwnProperty('square')
+    })
 
+    it('Allows previously saved functions to be invoked with constants', () => {
+      expect(evaluate("(define square (lambda (x) (* x x))) (square 5)")).to.equal(25)
+    })
+
+    it('Allows previously saved functions to be invoked with variables', () => {
+      expect(evaluate("(define x 5) (define square (lambda (x) (* x x))) (square x)")).to.equal(25)
+    })
+
+    it('Distinguishes correctly between different parameters', () => {
+      const env = {}
+      evaluate("(define mult (lambda (x y) (* x y)))", env)
+      evaluate("(define x 5)(define y 9)", env)
+      expect(evaluate("(mult x y)", env)).to.equal(45)
+    })
+
+    it('Exercises scoping rules, taking the value in the most specific scope', () => {
+      const env = {}
+      evaluate("(define mult (lambda (x) (* x x)))", env)
+      evaluate("(define x 5)", env)
+      expect(evaluate("(mult 2)", env)).to.equal(4)
+    })
+
+    it('Properly exercises the closure property', () => {
+
+    })
   })
 });
